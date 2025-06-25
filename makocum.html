@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Cum Clicker</title>
+  <style>
+    body { text-align: center; font-family: sans-serif; background: #c0d8f8; }
+    img { width: 200px; cursor: pointer; }
+    h1 { margin-top: 30px; }
+    .store {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .item {
+      background: #e6f5ff;
+      border: 2px solid #4c99f2;
+      border-radius: 10px;
+      padding: 10px;
+      width: 150px;
+      text-align: center;
+    }
+
+    .item img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+    }
+
+    button {
+      margin-top: 8px;
+      padding: 5px 10px;
+      background-color: #5493f2;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: default;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>¡Tienes: <span id="counter">0</span> huesos!</h1>
+  
+  <audio id="click-sound" src="Sans e.mp3" preload="auto"></audio>
+
+  <audio id="voz-pj1" src="weso.mp3" preload="auto"></audio>
+  <audio id="voz-pj2" src="bobo.mp3" preload="auto"></audio>
+  <audio id="voz-pj3" src="mort.mp3" preload="auto"></audio>
+  <audio id="voz-pj4" src="damedame.mp3" preload="auto"></audio>
+  
+  <img src="sans.png" class="click-img" alt="Sans" onclick="clicker()" />
+
+  <div class="store" id="store"></div>
+  <div id="jumping-character" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:999;"></div>
+  <div id="floating-zone" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999;"></div>
+  <script>
+    let count = 0;
+    
+    let autoclickers = 0;
+    const counterEl = document.getElementById('counter');
+    const autoclickersEl = document.getElementById('autoclickers');
+
+    const characters = [
+      { name: "El huesudo", img: "14vz4cvmncf51.png", cost: 10, boost: 1 },
+      { name: "Emiliano", img: "p2.png", cost: 30, boost: 2 },
+      { name: "Polla", img: "p3.png", cost: 70, boost: 3 },
+      { name: "Damedame", img: "p4.png", cost: 150, boost: 5 }
+    ];
+
+    const store = document.getElementById('store');
+
+    function clicker() {
+      count++;
+      document.getElementById('counter').textContent = count;
+      document.getElementById('click-sound').play();
+    }
+
+    function renderStore() {
+      store.innerHTML = '';
+      characters.forEach((char, index) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <p><strong>${char.name}</strong></p>
+          <img src="${char.img}" alt="${char.name}" />
+          <p>🦴 ${char.cost} huesos</p>
+          <button onclick="buy(${index})" id="btn${index}">Comprar</button>
+        `;
+        store.appendChild(div);
+      });
+    }
+
+    function buy(index) {
+      const item = characters[index];
+      if (count >= item.cost) {
+        count -= item.cost;
+        autoclickers += item.boost;
+        counterEl.textContent = count;
+        
+        if (index === 0) {
+            const opciones = [item.img, "azul.png", "amarillo.png"];
+            const eleccion = opciones[Math.floor(Math.random() * opciones.length)];
+            spawnStaticImage(eleccion);
+            document.getElementById('voz-pj1').play();
+        }
+        if (index === 1) {
+            showJumpingCharacter(item.img);
+            document.getElementById('voz-pj2').play();
+        }
+        if (index === 2) {
+            var src= "pollo.gif"
+            spawnStaticImage(src);
+            document.getElementById('voz-pj3').play();
+        }
+        if (index === 3) {
+            const audio = document.getElementById('voz-pj4');
+            const bg = document.getElementById('color-blast');
+            const banner = document.getElementById('birthday-banner');
+            
+            banner.style.display = 'block';
+
+            audio.currentTime = 0;
+            audio.play();
+
+            bg.style.display = 'block';
+            bg.classList.add('color-anim');
+            
+            lanzarEmojis();
+
+            audio.onended = () => {
+            bg.classList.remove('color-anim');
+            bg.style.display = 'none';
+            banner.style.display = 'none';
+            };
+        }
+      }
+    }
+
+    function lanzarEmojis(cantidad = 30) {
+        for (let i = 0; i < cantidad; i++) {
+            const emoji = document.createElement('div');
+            emoji.textContent = ['🎉','✨','🎂','🥳','🎈'][Math.floor(Math.random() * 5)];
+            emoji.style.position = 'fixed';
+            emoji.style.left = Math.random() * 100 + 'vw';
+            emoji.style.top = '-50px';
+            emoji.style.fontSize = '32px';
+            emoji.style.zIndex = 10000;
+            emoji.style.transition = 'top 3s ease, transform 3s ease';
+            document.body.appendChild(emoji);
+            
+            setTimeout(() => {
+                emoji.style.top = '100vh';
+                emoji.style.transform = `rotate(${Math.random() * 720 - 360}deg)`;
+            }, 100);
+            
+            setTimeout(() => emoji.remove(), 3500);
+        }
+    }
+
+    function showJumpingCharacter(imgSrc) {
+        const jumpDiv = document.getElementById('jumping-character');
+        jumpDiv.innerHTML = `<img src="${imgSrc}" alt="Personaje Saltando" />`;
+        jumpDiv.style.display = 'block';
+        
+        setTimeout(() => {
+            jumpDiv.style.display = 'none';
+        }, 2000);
+    }
+
+    function spawnStaticImage(imgSrc) {
+        const zone = document.getElementById('floating-zone');
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.style.position = 'absolute';
+        img.style.width = '80px';
+        img.style.pointerEvents = 'none';
+        img.style.transform = `rotate(${Math.random() * 360}deg) scale(${0.8 + Math.random() * 0.4})`;
+        
+        const x = Math.random() * (window.innerWidth - 80);
+        const y = Math.random() * (window.innerHeight - 80);
+        img.style.left = `${x}px`;
+        img.style.top = `${y}px`;
+        
+        zone.appendChild(img);
+    }
+
+    setInterval(() => {
+      if (autoclickers > 0) {
+        count += autoclickers;
+        counterEl.textContent = count;
+      }
+    }, 1200);
+
+    renderStore();
+  </script>
+  <div id="color-blast" style="position: fixed;top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background-color: black; display: none;"></div>
+  <div id="birthday-banner" style="display:none; position: fixed; top: 40%; left: 50%; transform: translateX(-50%); z-index: 10000; font-size: 48px; font-weight: bold; color: rgb(0, 0, 0); text-shadow: 2px 2px 5px rgb(255, 255, 255);">🤗 Feli Cum 🤗</div>
+</body>
+</html>
+
+<style>
+  .click-img {
+    width: 200px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+  }
+
+  .click-img:hover {
+    transform: scale(1.1);
+  }
+
+  .click-img:active {
+    transform: scale(0.95);
+  }
+  
+  @keyframes saltar {
+    0%   { transform: translateY(0); }
+    30%  { transform: translateY(-50px); }
+    60%  { transform: translateY(0); }
+    100% { transform: translateY(-20px); }
+  }
+  
+  #jumping-character img {
+    width: 120px;
+    animation: saltar 0.6s ease-in-out infinite;
+  }
+  
+  @keyframes psicodelia {
+    0%   { background-color: #d072e8; }
+    20%  { background-color: #00bfff; }
+    40%  { background-color: #fffb8a; }
+    60%  { background-color: #f57926; }
+    80%  { background-color: #35f077; }
+    100% { background-color: #d35de8; }
+ }
+ 
+ .color-anim {
+    animation: psicodelia 0.5s linear infinite;
+ }
+
+ @keyframes parpadeo {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+ }
+ 
+ #birthday-banner {
+    animation: parpadeo 0.6s ease-in-out infinite;
+ }
+</style>
