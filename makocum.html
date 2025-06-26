@@ -58,6 +58,7 @@
   <audio id="voz-pj2" src="bobo.mp3" preload="auto"></audio>
   <audio id="voz-pj3" src="mort.mp3" preload="auto"></audio>
   <audio id="voz-pj4" src="damedame.mp3" preload="auto"></audio>
+  <audio id="voz-pj5" src="Hello.mp3" preload="auto"></audio>
   
   <img src="sans.png" class="click-img" alt="Sans" onclick="clicker()" />
 
@@ -75,7 +76,8 @@
       { name: "El huesudo", img: "14vz4cvmncf51.png", cost: 10, boost: 1 },
       { name: "Emiliano", img: "p2.png", cost: 30, boost: 2 },
       { name: "Polla", img: "p3.png", cost: 70, boost: 3 },
-      { name: "Damedame", img: "p4.png", cost: 150, boost: 5 }
+      { name: "Damedame", img: "p4.png", cost: 150, boost: 5 },
+      { name: "Smile", img: "smile.png", cost: 999, boost: 10 }
     ];
 
     const store = document.getElementById('store');
@@ -139,10 +141,26 @@
             lanzarEmojis();
 
             audio.onended = () => {
-            bg.classList.remove('color-anim');
-            bg.style.display = 'none';
-            banner.style.display = 'none';
+              bg.classList.remove('color-anim');
+              bg.style.display = 'none';
+              banner.style.display = 'none';
             };
+        }
+        if (index === 4) {
+            const src = "bum.gif";
+            showJumpingEmu(item.img);
+            const audio = document.getElementById('voz-pj5');
+            let yaMostrado = false;
+
+            audio.currentTime = 0;
+            audio.play();
+
+            audio.addEventListener('timeupdate', () => {
+              if (audio.currentTime >= 6 && !yaMostrado) {
+                showJumpingCharacter(src);
+                yaMostrado = true;
+              }
+            });
         }
       }
     }
@@ -176,6 +194,16 @@
         setTimeout(() => {
             jumpDiv.style.display = 'none';
         }, 2000);
+    }
+
+    function showJumpingEmu(imgSrc) {
+        const jumpDiv = document.getElementById('jumping-character');
+        jumpDiv.innerHTML = `<img src="${imgSrc}" alt="Personaje Saltando" />`;
+        jumpDiv.style.display = 'block';
+        
+        setTimeout(() => {
+            jumpDiv.style.display = 'none';
+        }, 6000);
     }
 
     function spawnStaticImage(imgSrc) {
@@ -236,17 +264,17 @@
     animation: saltar 0.6s ease-in-out infinite;
   }
   
-  @keyframes psicodelia {
+  @keyframes locura {
     0%   { background-color: #d072e8; }
     20%  { background-color: #00bfff; }
-    40%  { background-color: #fffb8a; }
-    60%  { background-color: #f57926; }
-    80%  { background-color: #35f077; }
-    100% { background-color: #d35de8; }
+    40%  { background-color: #ffcf8a; }
+    60%  { background-color: #fef7b0; }
+    80%  { background-color: #81f8ab; }
+    100% { background-color: #ffbcf6; }
  }
  
  .color-anim {
-    animation: psicodelia 0.5s linear infinite;
+    animation: locura 0.5s linear infinite;
  }
 
  @keyframes parpadeo {
